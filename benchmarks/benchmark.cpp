@@ -2,6 +2,7 @@
 #include "absl/strings/charconv.h"
 #include "absl/strings/numbers.h"
 #include "fast_float/fast_float.h"
+#include <ffloat/ffloat.h>
 
 
 #include "double-conversion/ieee.h"
@@ -137,6 +138,19 @@ double findmax_fastfloat(std::vector<std::string> &s) {
   return answer;
 }
 
+double findmax_ffloat(std::vector<std::string> &s) {
+  double answer = 0;
+  double x = 0;
+  for (std::string &st : s) {
+    auto [p, ec] = ffloat::from_chars(st.data(), st.data() + st.size(), x);
+    if (p == st.data()) {
+      throw std::runtime_error("bug in findmax_ffloat");
+    }
+    answer = answer > x ? answer : x;
+  }
+  return answer;
+}
+
 double findmax_absl_from_chars(std::vector<std::string> &s) {
   double answer = 0;
   double x = 0;
@@ -230,6 +244,7 @@ void process(std::vector<std::string> &lines, size_t volume) {
   pretty_print(volume, lines.size(), "strtod", time_it_ns(lines, findmax_strtod, repeat));
   pretty_print(volume, lines.size(), "abseil", time_it_ns(lines, findmax_absl_from_chars, repeat));
   pretty_print(volume, lines.size(), "fastfloat", time_it_ns(lines, findmax_fastfloat, repeat));
+  pretty_print(volume, lines.size(), "ffloat", time_it_ns(lines, findmax_ffloat, repeat));
 #ifdef FROM_CHARS_AVAILABLE_MAYBE
   pretty_print(volume, lines.size(), "from_chars", time_it_ns(lines, findmax_from_chars, repeat));
 #endif

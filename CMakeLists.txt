@@ -43,6 +43,6 @@ FetchContent_Declare(doubleconversion
 FetchContent_GetProperties(doubleconversion)
 FetchContent_MakeAvailable(doubleconversion)
 
-
+add_subdirectory(ffloat)
 
 add_subdirectory(benchmarks)
